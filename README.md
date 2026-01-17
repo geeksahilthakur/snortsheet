@@ -53,13 +53,8 @@ SnortSheet is a **proprietary security middleware** that connects **Snort IDS**
 to **cloud-native monitoring and automation workflows** using Google Sheets as
 a lightweight SOC dashboard.
 
-It removes the need for:
-- ELK stack
-- Databases
-- Commercial SIEMs
-- Dedicated SOC servers
-
-The focus is **practical security engineering**, not infrastructure bloat.
+It removes the need for ELK stacks, databases, and commercial SIEM platforms,
+focusing instead on **lean, practical security engineering**.
 
 ---
 
@@ -122,7 +117,7 @@ Google Sheets (SOC) + Email Alerts
 ### Prerequisites
 
 <table>
-<tr><td><strong>OS</strong></td><td>Ubuntu 20.04 / 22.04 (recommended), Debian, Kali</td></tr>
+<tr><td><strong>OS</strong></td><td>Ubuntu 20.04 / 22.04, Debian, Kali</td></tr>
 <tr><td><strong>Python</strong></td><td>3.8 or newer</td></tr>
 <tr><td><strong>Network</strong></td><td>Active internet connection</td></tr>
 </table>
@@ -131,16 +126,16 @@ Google Sheets (SOC) + Email Alerts
 
 ### Phase 1: Google Sheets Backend (Apps Script)
 
-1. Create a new **Google Sheet**
-2. Go to **Extensions → Apps Script**
-3. Delete all default code
-4. Paste the contents of `code.gs`
-5. Click **Deploy → New deployment**
+1. Create a new Google Sheet  
+2. Go to **Extensions → Apps Script**  
+3. Delete default code  
+4. Paste contents of `code.gs`  
+5. Click **Deploy → New deployment**  
 6. Select **Web app**
    - Execute as: **Me**
-   - Who has access: **Anyone**
-7. Authorize permissions
-8. Copy the **Web App URL** (save it)
+   - Access: **Anyone**
+7. Authorize permissions  
+8. Copy the **Web App URL**
 
 ---
 
@@ -149,70 +144,54 @@ Google Sheets (SOC) + Email Alerts
 ```bash
 sudo apt update
 sudo apt install snort -y
-Edit Snort configuration:
+Edit configuration:
 
 sudo nano /etc/snort/snort.conf
-Enable CSV alert output:
+Enable CSV alerts:
 
 output alert_csv: /var/log/snort/alert.csv timestamp,msg,proto,src,srcport,dst,dstport
 Validate configuration:
 
 sudo snort -T -c /etc/snort/snort.conf
 Phase 3: Python Bridge Setup
-Clone the repository:
-
 git clone https://github.com/geeksahil/snortsheet.git
 cd snortsheet
-Install dependencies:
-
 pip3 install -r requirements.txt
-Configure webhook URL:
+Edit snort_bridge.py:
 
 WEBHOOK_URL = "PASTE_YOUR_GOOGLE_APPS_SCRIPT_URL"
-Save the file.
-
 Running the System
-Start the Python Bridge
+Start Python Bridge
 sudo python3 snort_bridge.py
-Expected output:
+Expected:
 
 [READY] Watching log file...
 Start Snort
-Find your interface:
-
 ip addr
-Start Snort:
-
 sudo snort -c /etc/snort/snort.conf -i wlo1
 Testing Scenarios
 ICMP Test
 ping <SENSOR_IP>
-Expected:
-
-Alert appears in Google Sheets
-
-Email notification sent
-
 DNS Test
 nslookup google.com 8.8.8.8
 HTTP Test
 curl http://example.com
 Advanced Configuration
-<table> <tr><td><strong>EMAIL_COOLDOWN</strong></td><td>Controls alert frequency (default: 60s)</td></tr> <tr><td><strong>LOG_FILE</strong></td><td>Custom Snort log path</td></tr> <tr><td><strong>Rate limiting</strong></td><td>Do not reduce below 0.5s</td></tr> </table>
+<table> <tr><td><strong>EMAIL_COOLDOWN</strong></td><td>Alert frequency (default: 60s)</td></tr> <tr><td><strong>LOG_FILE</strong></td><td>Custom Snort log path</td></tr> <tr><td><strong>Rate limiting</strong></td><td>Do not reduce below 0.5s</td></tr> </table>
 Troubleshooting
-Wrong interface error
+Wrong interface
 
 ip addr
 No alerts
 
 tail -f /var/log/snort/alert.csv
-Emails not received
+No emails
 
-Check spam folder
+Check spam
 
 Redeploy Apps Script
 
-Ensure access is set to “Anyone”
+Ensure access is “Anyone”
 
 Repository Structure
 snortsheet/
@@ -232,9 +211,6 @@ Author
 Sahil Thakur
 Security Researcher & Developer
 
-Focus:
-Building lean, intelligent security systems without enterprise bloat.
-
 License
 <details> <summary>View full license</summary>
 Copyright (c) 2026 Sahil Thakur.
@@ -242,7 +218,7 @@ All Rights Reserved.
 
 This software is proprietary.
 Unauthorized copying, modification, distribution,
-or use is strictly prohibited.
+reverse engineering, or use is strictly prohibited.
 
 THE SOFTWARE IS PROVIDED "AS IS".
 </details>
